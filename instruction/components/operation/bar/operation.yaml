@@ -1,0 +1,617 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: Bâtiment résidentiel
+type: object
+properties:
+  fiche:
+    $ref: https://schemas.ceeconnect.fr/enums/fiche
+discriminator:
+  propertyName: fiche
+oneOf:
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-101v39-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-101v39-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-101v54-5
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-101v54-5.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-102v39-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-102v39-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-103v39-5
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-103v39-5.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-104v14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-104v14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-104v54-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-104v54-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-105v39-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-105v39-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-106v33-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-106v33-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-107v20-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-107v20-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-108v37-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-108v37-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-108v54-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-108v54-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-109v24-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-109v24-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EN-110v35-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EN-110v35-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EQ-110v15-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EQ-110v15-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-EQ-115v28-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-EQ-115v28-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-104v19-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-104v19-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-105v28-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-105v28-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-106v32-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-106v32-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-107v37-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-107v37-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-108v48-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-108v48-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-SE-109v54-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-SE-109v54-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-101v17-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-101v17-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-102v17-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-102v17-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-104v41-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-104v41-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-106v23-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-106v23-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-107-SEv14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-107-SEv14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-107v14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-107v14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-110v16-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-110v16-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-111v17-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-111v17-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-112v46-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-112v46-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-113v41-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-113v41-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-116v17-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-116v17-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-117v14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-117v14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-118v14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-118v14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-122v15-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-122v15-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-123v17-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-123v17-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-123v54-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-123v54-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-124v35-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-124v35-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-125v40-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-125v40-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-125v54-5
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-125v54-5.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-127v40-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-127v40-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-127v54-5
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-127v54-5.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-129v27-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-129v27-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-130v26-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-130v26-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-130v54-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-130v54-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-135v35-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-135v35-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-137v45-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-137v45-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-139v23-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-139v23-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-141v15-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-141v15-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-143v25-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-143v25-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-143v51-5
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-143v51-5.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-145v36-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-145v36-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-145v52-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-145v52-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-148v15-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-148v15-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-150v14-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-150v14-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-155v40-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-155v40-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-158v35-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-158v35-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-159v44-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-159v44-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-159v50-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-159v50-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-160v39-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-160v39-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-160v50-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-160v50-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-160v54-4
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-160v54-4.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-161v28-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-161v28-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-161v54-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-161v54-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-162v28-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-162v28-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-163v38-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-163v38-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-164v36-2
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-164v36-2.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-164v52-3
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-164v52-3.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-165v34-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-165v34-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-166v38-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-166v38-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-167v38-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-167v38-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-168v40-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-168v40-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-169v46-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-169v46-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-170v54-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-170v54-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-171v55-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-171v55-1.yaml
+  - type: object
+    properties:
+      fiche:
+        const: BAR-TH-172v55-1
+    required:
+      - fiche
+    allOf:
+      - $ref: ./BAR-TH-172v55-1.yaml

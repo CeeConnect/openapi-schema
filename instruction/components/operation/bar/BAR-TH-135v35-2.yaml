@@ -1,0 +1,112 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-135v35-2
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-135v35-2
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceOutreMer
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/IMMEUBLE
+        title: Le bâtiment est un immeuble collectif d'habitation
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batiment
+      extensionBatiment:
+        title: L'opération concerne une partie nouvelle d'un bâtiment existant
+        type: boolean
+      typeEquipement:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/chauffeEauSolaireCollectif
+      surfaceCapteurs:
+        title: Surface hors-tout totale de capteurs solaires (m²)
+        type: number
+        minimum: 0
+      besoinEauChaudeSanitaire:
+        title: Besoin annuel en eau chaude sanitaire (kWh/an)
+        description: Donnée issue de l'étude de dimensionnement
+        type: number
+        minimum: 0
+      tauxCouvertureSolaire:
+        title: Taux de couverture par l'énergie solaire (%)
+        description: Donnée issue de l'étude de dimensionnement
+        type: number
+      performanceEnergetique:
+        title: Efficacité énergétique pour le chauffage de l'eau (%)
+        type: number
+        minimum: 36
+      marque:
+        title: Marque de la pompe
+        type: string
+      reference:
+        title: Référence de la pompe
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/86
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Etude de dimensionnement
+          type: object
+          properties:
+            code:
+              const: NOTE_DIMENSIONNEMENT
+      - contains:
+          title: Avis de certification QB
+          type: object
+          properties:
+            code:
+              const: CERTIFICATION
+allOf:
+  - if:
+      properties:
+        description:
+          type: object
+          properties:
+            surfaceCapteurs:
+              type: number
+              exclusiveMinimum: 25
+    then:
+      properties:
+        document:
+          title: Preuve de qualification
+          type: object
+          properties:
+            code:
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-135v35-2
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/3
+    description:
+      typeBatiment: IMMEUBLE
+      ancienneteBatiment: EXISTANT
+      extensionBatiment: false
+      typeEquipement: CESCI
+      surfaceCapteurs: 35
+      besoinEauChaudeSanitaire: 100000
+      tauxCouvertureSolaire: 80
+      performanceEnergetique: 50
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: CERTIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: NOTE_DIMENSIONNEMENT
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

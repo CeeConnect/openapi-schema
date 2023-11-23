@@ -1,0 +1,67 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-129v27-3
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-129v27-3
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/individuel
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      surfaceChauffee:
+        title: Surface exclusivement chauffée par la PAC installée
+        type: number
+        minimum: 0
+      puissanceNominale:
+        title: Puissance nominale de l'équipement
+        type: number
+        maximum: 12
+      performanceEnergetique:
+        $ref: https://schemas.ceeconnect.fr/formats/performance_energetique#/$defs/scop
+        minimum: 3.9
+      marque:
+        title: Marque de l'équipement
+        type: string
+      reference:
+        title: Référence de l'équipement
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/89
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Preuve de qualification de l'installateur
+          type: object
+          properties:
+            code:
+              type: string
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-129v27-3
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      surfaceChauffee: 100
+      puissanceNominale: 9
+      performanceEnergetique: 4.2
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

@@ -1,0 +1,122 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$comment: Scénario Flamme verte uniquement couvert
+title: BAR-TH-113v41-3
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-113v41-3
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/MAISON
+        title: Le bâtiment est une maison individuelle
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      typeEquipement:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/chaudiereBiomasse
+      puissanceNominale:
+        title: Puissance nominale de la chaudière
+        type: number
+        minimum: 0
+      performanceEnergetique:
+        $ref: https://schemas.ceeconnect.fr/formats/performance_energetique#/$defs/etas
+        minimum: 77
+      performanceEnergetiqueRegulateur:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/classe_regulateur
+        title: Classe du régulateur
+      critereTypeBiomasse:
+        title: Biomasse ligneuse à base de bûches de bois, de copeaux de bois, de bois
+          comprimé sous forme de granulés, de bois comprimé sous forme de
+          briquettes ou de sciure de bois
+        type: boolean
+        const: true
+      critereFlammeVerte:
+        title: La chaudière installée possède le label Flamme Verte 7*
+        type: boolean
+        const: true
+      marque:
+        title: Marque des équipements
+        type: string
+      reference:
+        title: Référence des équipements
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/87
+    allOf:
+      - if:
+          properties:
+            puissanceNominale:
+              type: number
+              exclusiveMinimum: 20
+        then:
+          properties:
+            performanceEnergetique:
+              type: number
+              minimum: 79
+      - if:
+          properties:
+            typeEquipement:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/CHAUDIERE_BIOMASSE_CHARGEMENT_AUTOMATIQUE
+        then:
+          properties:
+            criterePresenceSilo:
+              title: Présence d'un silo d'au moins 225 litres
+              type: boolean
+              const: true
+      - if:
+          properties:
+            typeEquipement:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/CHAUDIERE_BIOMASSE_CHARGEMENT_MANUEL
+        then:
+          properties:
+            criterePresenceBallon:
+              title: Présence d'un ballon tampon
+              type: boolean
+              const: true
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Preuve de qualification du professionnel
+          type: object
+          properties:
+            code:
+              const: PREUVE_QUALIFICATION
+      - contains:
+          title: Note de dimensionnement
+          type: object
+          properties:
+            code:
+              const: NOTE_DIMENSIONNEMENT
+examples:
+  - fiche: BAR-TH-113v41-3
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      typeEquipement: CHARGEMENT_AUTOMATIQUE
+      puissanceNominale: 18
+      performanceEnergetique: 85
+      performanceEnergetiqueRegulateur: VII
+      critereTypeBiomasse: true
+      critereFlammeVerte: true
+      criterePresenceSilo: true
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: NOTE_DIMENSIONNEMENT
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

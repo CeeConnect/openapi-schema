@@ -1,0 +1,29 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+properties:
+  fiche:
+    $ref: https://schemas.ceeconnect.fr/enums/fiche
+  bonification:
+    title: Bonification
+    oneOf:
+      - $ref: https://schemas.ceeconnect.fr/formats/bonification
+      - type: "null"
+  dateEngagement:
+    title: Date d'engagement de l'opération
+    type: string
+    format: date
+required:
+  - fiche
+  - bonification
+  - dateEngagement
+allOf:
+  - if:
+      type: object
+      properties:
+        fiche:
+          pattern: ^BAR.+$
+      required:
+        - fiche
+    then:
+      allOf:
+        - $ref: ./operation/bar/operation.yaml

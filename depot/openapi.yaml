@@ -1,0 +1,343 @@
+openapi: 3.1.0
+info:
+  title: Dépôt
+  description: API de gestion et de validation des dépôts
+  version: 1.0.0
+servers:
+  - url: /depot
+security:
+  - apiKey: []
+tags:
+  - name: Dépôt
+  - name: Opération
+paths:
+  /depots:
+    get:
+      summary: Recherche des dépôts
+      operationId: getDepotsBy
+      tags:
+        - Dépôt
+      parameters:
+        - name: statut
+          in: query
+          schema:
+            $ref: "#/components/schemas/statut"
+        - name: dateCreation[after]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateCreation[before]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateDepot[after]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateDepot[before]
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/depot"
+    post:
+      summary: Ajoute un nouveau dépôt
+      operationId: createDepot
+      tags:
+        - Dépôt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                nom:
+                  title: Nom du dépôt
+                  type: string
+              required:
+                - nom
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/depot"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /depots/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/depot"
+    get:
+      summary: Recherche un dépôt par UUID
+      operationId: getDepotByUuid
+      tags:
+        - Dépôt
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/depot"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+    patch:
+      summary: Modifie un dépôt
+      operationId: updateDepot
+      tags:
+        - Dépôt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  title: Nom du dépôt
+                  type: string
+                referenceEmmy:
+                  title: Référence Emmy du dépôt
+                  type: string
+                dateDepot:
+                  title: Date du dépôt auprès du PNCEE
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/depot"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /depot/{uuid}/{action}:
+    parameters:
+      - $ref: "#/components/parameters/depot"
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          oneOf:
+            - const: ouvre
+              title: (Ré-)ouvre le dépôt
+            - const: ferme
+              title: Ferme le dépôt
+            - const: controle
+              title: Transmet pour contrôle
+            - const: valorise
+              title: Transmet pour valorisation
+            - const: valide
+              title: Transmet pour validation
+            - const: archive
+              title: Archive le dépôt
+    post:
+      summary: Gestion du cycle de vie d'un dépôt
+      operationId: manageDepot
+      tags:
+        - Dépôt
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/depot"
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /depots/{uuid}/operations:
+    parameters:
+      - $ref: "#/components/parameters/depot"
+    post:
+      summary: Créé une opération d'économies d'énergie
+      operationId: createOperation
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./components/operation.yaml
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/operation"
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /operations:
+    get:
+      summary: Liste des opérations d'économies d'énergie d'un dépôt
+      operationId: getOperationsBy
+      tags:
+        - Opération
+      parameters:
+        - name: depot
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/operation"
+  /operations/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/operation"
+    get:
+      summary: Recherche une opération d'économies d'énergie par UUID
+      operationId: getOperationsById
+      tags:
+        - Opération
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/operation"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+    delete:
+      summary: Supprime une opération d'économies d'énergie du dépôt
+      operationId: removeOperation
+      tags:
+        - Opération
+      responses:
+        "204":
+          description: Opération suprimée
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+components:
+  parameters:
+    depot:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    operation:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    statut:
+      title: Statut interne
+      type: string
+      oneOf:
+        - title: Ouvert
+          description: Le dépôt accepte de nouvelles opérations d'économies d'énergie
+          const: OUVERT
+        - title: Fermé
+          description: Le dépôt n'accepte pas de nouvelles opérations d'économies d'énergie
+          const: FERME
+        - title: Transmis pour contrôle
+          description: Le dépôt est en cours de contrôle
+          const: EN_COURS_CONTROLE
+        - title: Transmis pour instruction
+          description: Le dépôt est en cours d'instruction auprès du PNCEE
+          const: EN_COURS_INSTRUCTION
+        - title: En cours de correction
+          description: Le dépôt est en cours de correction
+          const: EN_COURS_MODIFICATION
+        - title: Archivé
+          description: Dépôt archivé
+          const: ARCHIVE
+    depot:
+      type: object
+      properties:
+        uuid:
+          title: Identifiant
+          type: string
+          format: uuid
+        referenceEmmy:
+          title: Référence Emmy du dépôt
+          type:
+            - string
+            - "null"
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        dateModification:
+          title: Date de dernière modification
+          type: string
+          format: date
+        dateDepot:
+          title: Date du dépôt auprès du PNCEE
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        nom:
+          title: Nom interne du dépôt
+          type: string
+        statut:
+          $ref: "#/components/schemas/statut"
+        volumeCeeClassique:
+          title: Volume de CEE classique
+          type: integer
+          minimum: 0
+        volumeCeePrecarite:
+          title: Volume de CEE précarité
+          type: integer
+          minimum: 0
+      required:
+        - uuid
+        - referenceEmmy
+        - dateCreation
+        - dateModification
+        - dateDepot
+        - nom
+        - statut
+        - volumeCeeClassique
+        - volumeCeePrecarite
+    operation:
+      type: object
+      properties:
+        uuid:
+          title: Identifiant
+          type: string
+          format: string
+      required:
+        - uuid
+      allOf:
+        - $ref: https://schemas.ceeconnect.fr/bundles/operation/operation
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: apiKey
+      in: header

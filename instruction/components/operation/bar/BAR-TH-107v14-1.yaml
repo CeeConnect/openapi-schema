@@ -1,0 +1,86 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-107v14-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-107v14-1
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/IMMEUBLE
+        title: Le bâtiment est un immeuble collectif d'habitation
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      logements:
+        title: Nombre d'appartements
+        description: Nombre d'appartement d'un même bâtiment
+        type: integer
+        minimum: 1
+      puissanceNominale:
+        title: Puissance nominale de la chaudière
+        type: number
+        minimum: 0
+      puissanceEligibleAutresFiches:
+        title: Puissance totale de la pompe à chaleur installée (kW)
+        description: Puissance nominale totale des chaudières nouvellement installés
+          respectant les conditions des fiches d'opérations standardisées en
+          vigueur
+        type: number
+        minimum: 0
+      puissanceEligible:
+        title: Puissance nominale totale des chaudières nouvellement installées (kW)
+        type: number
+        minimum: 0
+      puissanceChaufferie:
+        title: Puissance nominale totale de la chaufferie après travaux (kW)
+        type: number
+      marque:
+        title: Marque de la chaudière
+        type: string
+      reference:
+        title: Référence de la chaudière
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/86
+    allOf:
+      - if:
+          properties:
+            puissanceEligibleAutresFiches:
+              type: number
+              exclusiveMinimum: 0
+        then: {}
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    contains:
+      title: Preuve de qualification de l'installateur
+      type: object
+      properties:
+        code:
+          type: string
+          const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-107v14-1
+    description:
+      typeBatiment: IMMEUBLE
+      ancienneteBatiment: EXISTANT
+      logements: 10
+      puissanceNominale: 300
+      puissanceEligibleAutresFiches: 0
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

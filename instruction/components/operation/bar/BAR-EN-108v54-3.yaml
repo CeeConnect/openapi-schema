@@ -1,0 +1,75 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-EN-108v54-3
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-EN-108v54-3
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceOutreMer
+  description:
+    type: object
+    properties:
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      critereAncienneteEquipement:
+        title: La fenêtre ou porte-fenêtre sur laquelle est installée la fermeture
+          isolante est âgée de plus de 2 ans à la date d'engagement de
+          l'opération
+        type: boolean
+        const: true
+      quantite:
+        title: Nombre de fermetures isolantes posées
+        type: integer
+        minimum: 0
+      surface:
+        title: Surface totale de fermeture isolante posée (m²)
+        type: number
+        minimum: 0
+      resistanceThermique:
+        title: Résistance thermique additionnelle (m².K/W)
+        type: number
+        minimum: 0.22
+      marque:
+        title: Marque des équipements installés
+        type: string
+      reference:
+        title: Référence des équipements installés
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/93
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Preuve de qualification du professionnel
+          type: object
+          properties:
+            code:
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-EN-108v54-3
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/3
+    description:
+      ancienneteBatiment: EXISTANT
+      critereAncienneteEquipement: true
+      quantite: 10
+      surface: 15
+      resistanceThermique: 0.4
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

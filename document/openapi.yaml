@@ -1,0 +1,329 @@
+openapi: 3.1.0
+info:
+  title: API Documents
+  description: API de gestion des documents relatifs aux opérations d'économies d'énergie
+  version: 1.0.0
+servers:
+  - url: /document
+security:
+  - apiKey: []
+tags:
+  - name: Document
+paths:
+  /documents:
+    get:
+      summary: Liste les documents
+      operationId: getDocuments
+      tags:
+        - Document
+      parameters:
+        - name: reference
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: statut
+          in: query
+          schema:
+            $ref: "#/components/schemas/statut"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/document"
+    post:
+      summary: Ajout d'un nouveau document
+      operationId: createDocument
+      tags:
+        - Document
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                reference:
+                  title: Référence interne
+                  type: string
+                  format: uuid
+                document:
+                  type: string
+                  format: binary
+                code:
+                  title: Code du document
+                  type: string
+                nom:
+                  title: Nom du document
+                  type: string
+              required:
+                - reference
+                - document
+                - nom
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /documents/generation:
+    post:
+      summary: Génère une pièce justificative pour automatisation
+      operationId: genereDocument
+      tags:
+        - Document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                reference:
+                  title: Référence interne
+                  type: string
+                  format: uuid
+                automation:
+                  title: Initialise une procédure de gestion automatique du document généré
+                  type: boolean
+                  default: false
+                code:
+                  title: Code du document
+                  type: string
+                  enum:
+                    - attestation_honneur
+                    - cadre_contribution
+                data:
+                  description: Données d'entrée conformes aux Schémas JSON
+                  type: object
+              required:
+                - reference
+                - automation
+                - code
+                - data
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/document"
+                  - type: string
+                    format: binary
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /documents/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/document"
+    get:
+      summary: Récupère un document
+      operationId: getDocument
+      tags:
+        - Document
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+    post:
+      summary: Remplace un document
+      operationId: replaceDocument
+      tags:
+        - Document
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "422":
+          $ref: ../styles.yaml#/responses/422
+    patch:
+      summary: Modifie un document
+      operationId: updateDocument
+      tags:
+        - Document
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+              properties:
+                code:
+                  title: Code du document
+                  type: string
+                nom:
+                  title: Nom du document
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "422":
+          $ref: ../styles.yaml#/responses/422
+    delete:
+      summary: Supprime un document
+      operationId: removeDocument
+      tags:
+        - Document
+      responses:
+        "204":
+          $ref: ../styles.yaml#/responses/204
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /documents/{uuid}/telechargement:
+    parameters:
+      - $ref: "#/components/parameters/document"
+    get:
+      summary: Télécharge un document
+      operationId: downloadDocument
+      tags:
+        - Document
+      responses:
+        "200":
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /documents/{uuid}/{action}:
+    parameters:
+      - $ref: "#/components/parameters/document"
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+            - valide
+            - invalide
+            - archive
+    post:
+      summary: Gestion du cycle de vie d'un document
+      operationId: manageDocument
+      tags:
+        - Document
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document"
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+components:
+  parameters:
+    document:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    statut:
+      title: Statut du document
+      type: string
+      oneOf:
+        - const: en_attente_validation
+          title: En attente de validation
+        - const: en_attente_signature
+          title: En attente de signature
+        - const: valide
+          title: Document invalide
+        - const: invalide
+          title: Document valide
+        - const: archive
+          title: Document archivé
+    document:
+      title: Document
+      type: object
+      properties:
+        uuid:
+          title: Identifiant
+          type: string
+          format: uuid
+        reference:
+          title: Référence interne
+          type: string
+          format: uuid
+        signature:
+          title: Identifiant de la procédure de signature électronique
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        archive:
+          title: Identifiant de l'archive
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        dateModification:
+          title: Date de modification
+          type: string
+          format: date
+        code:
+          title: Code du document
+          type: string
+        nom:
+          title: Nom du document
+          type: string
+        statut:
+          $ref: "#/components/schemas/statut"
+      required:
+        - uuid
+        - reference
+        - signature
+        - archive
+        - dateCreation
+        - dateModification
+        - code
+        - nom
+        - statut
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: apiKey
+      in: header

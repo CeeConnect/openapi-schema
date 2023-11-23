@@ -1,0 +1,104 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-143v25-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-143v25-1
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceMetropolitaine
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/MAISON
+        title: Le bâtiment est une maison individuelle
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      temperatureDistribution:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/temperature_distribution#/$defs/BASSE_TEMPERATURE
+        title: Le système est couplé à des émetteurs de chauffage central de type basse
+          température
+      productiviteCapteurs:
+        title: Productivité des capteurs (W/m²)
+        type: number
+        minimum: 600
+      critereCertification:
+        title: Les capteurs solaires ont une certification CSTBat ou Solar Keymark ou
+          équivalente
+        type: boolean
+        const: true
+      critereCapteursHybrides:
+        title: Les capteurs solaires produisent à la fois électricité et chaleur
+          (capteurs hybrides)
+        type: boolean
+        const: false
+      marque:
+        title: Marque de l'équipement
+        type: string
+      reference:
+        title: Référence de l'équipement
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/86
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Preuve de réalisation de l'opération
+          description: >
+            La preuve de réalisation de l'opération mentionne la mise en place
+            d'un système solaire combiné et la
+
+            productivité des capteurs solaires en W/m²
+          type: object
+          properties:
+            code:
+              type: string
+              const: PREUVE_REALISATION
+      - contains:
+          title: Certification CSTBat ou Solar Keymark
+          type: object
+          properties:
+            code:
+              type: string
+              const: CERTIFICATION
+      - contains:
+          title: Preuve de qualification du professionnel ayan réalisé l'opération
+          type: object
+          properties:
+            code:
+              type: string
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-143v25-1
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/0
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      temperatureDistribution: BASSE_TEMPERATURE
+      productiviteCapteurs: 800
+      critereCapteursHybrides: false
+      critereCertification: true
+      volumeStockage: 100
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_REALISATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: CERTIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

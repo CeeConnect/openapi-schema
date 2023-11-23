@@ -1,0 +1,84 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-EQ-110v15-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-EQ-110v15-1
+  description:
+    type: object
+    properties:
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      indiceProtectionChocs:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/indice_protection_chocs
+      efficaciteLumineuse:
+        title: Efficacité lumineuse (lm/W)
+        type: integer
+        minimum: 65
+      dureeVie:
+        title: Durée de vie (heures)
+        description: Durée de vie avec une chute de flux lumineux ≤ à 30 %
+        type: integer
+        minimum: 40000
+      quantite:
+        title: Quantité de luminaires installés
+        type: integer
+        minimum: 0
+      detecteurLumiere:
+        title: Système de détection tenant compte des apports de lumière du jour
+        type: boolean
+      detecteurPresence:
+        title: Détection de présence ou de mouvement
+        type: boolean
+      marque:
+        title: Marque
+        type: string
+      reference:
+        title: Référence
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+    allOf:
+      - if:
+          not:
+            properties:
+              indiceProtectionChocs:
+                $ref: https://schemas.ceeconnect.fr/enums/bar/indice_protection_chocs#/$defs/10
+        then:
+          properties:
+            efficaciteLumineuse:
+              type: integer
+              minimum: 90
+      - if:
+          not:
+            properties:
+              indiceProtectionChocs:
+                $ref: https://schemas.ceeconnect.fr/enums/bar/indice_protection_chocs#/$defs/10
+        then:
+          properties:
+            dureeVie:
+              type: integer
+              minimum: 50000
+    anyOf:
+      - properties:
+          detecteurLumiere:
+            type: boolean
+            const: true
+      - properties:
+          detecteurPresence:
+            type: boolean
+            const: true
+examples:
+  - fiche: BAR-EQ-110v15-1
+    description:
+      ancienneteBatiment: EXISTANT
+      indiceProtectionChocs: "10"
+      efficaciteLumineuse: 95
+      detecteurLumiere: true
+      dureeVie: 60000
+      quantite: 100
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0

@@ -1,0 +1,115 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-155v40-4
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-155v40-4
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceMetropolitaine
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/collectif
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      ventilationExistante:
+        title: Système de ventilation existant
+        type: string
+        oneOf:
+          - $ref: https://schemas.ceeconnect.fr/enums/bar/type_ventilation#/$defs/NATURELLE
+          - $ref: https://schemas.ceeconnect.fr/enums/bar/type_ventilation#/$defs/SANS
+      logements:
+        title: Nombre d'appartements
+        type: integer
+        minimum: 1
+      typeEquipement:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/vmcHygroreglable
+      typeExtracteur:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_extracteur_vmc
+      puissanceExtracteur:
+        title: Puissance spécifique de l'extracteur (Wh/m3)
+        type: number
+        maximum: 0.25
+      marqueExtracteur:
+        title: Marque de l'extracteur
+        type: string
+      referenceExtracteur:
+        title: Référence de l'extracteur
+        type: string
+      marqueBouchesEntreeAir:
+        title: Marque des bouches d'entrée d'air
+        type: string
+      referenceBouchesEntreeAir:
+        title: Référence des bouches d'entrée d'air
+        type: string
+      marqueBouchesExtraction:
+        title: Marque des bouches d'extraction
+        type: string
+      referenceBouchesExtraction:
+        title: Référence des bouches d'extraction
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/92
+    allOf:
+      - if:
+          properties:
+            typeExtracteur:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_extracteur_vmc#/$defs/BASSE_CONSOMMATION
+        then:
+          properties:
+            puissanceExtracteur:
+              type: number
+              maximum: 0.1
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Avis technique du système de ventilation hybride hygroréglable
+          type: object
+          properties:
+            code:
+              type: string
+              const: AVIS_TECHNIQUE
+      - contains:
+          title: Preuve de qualification de l'installateur
+          type: object
+          properties:
+            code:
+              type: string
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-155v40-4
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/0
+    description:
+      typeBatiment: IMMEUBLE
+      ancienneteBatiment: EXISTANT
+      ventilationExistante: SANS
+      logements: 50
+      typeEquipement: TYPE_A
+      typeExtracteur: BASSE_CONSOMMATION
+      puissanceExtracteur: 0.05
+      marqueExtracteur: MARQUE
+      referenceExtracteur: REFERENCE
+      marqueBouchesEntreeAir: MARQUE
+      referenceBouchesEntreeAir: REFERENCE
+      marqueBouchesExtraction: MARQUE
+      referenceBouchesExtraction: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: AVIS_TECHNIQUE
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

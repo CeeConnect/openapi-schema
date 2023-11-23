@@ -1,0 +1,50 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-110v16-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-110v16-1
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/individuel
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      critereChauffageCentral:
+        title: Logement(s) chauffé(s) par un système de chauffage central
+        type: boolean
+        const: true
+      quantite:
+        title: Nombre de radiateurs installé
+        type: integer
+        minimum: 1
+      marque:
+        title: Marque des équipements
+        type: string
+      reference:
+        title: Référence des équipements
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+    allOf:
+      - if:
+          properties:
+            typeBatiment:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/APPARTEMENT
+        then:
+          properties:
+            typeInstallation:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_installation
+examples:
+  - fiche: BAR-TH-110v16-1
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      critereChauffageCentral: true
+      quantite: 10
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0

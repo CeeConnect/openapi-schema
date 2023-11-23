@@ -1,0 +1,58 @@
+parameters:
+  itemsPerPage:
+    name: itemsPerPage
+    in: query
+    schema:
+      type: integer
+      minimum: 10
+      maximum: 100
+      default: 25
+  page:
+    name: page
+    in: query
+    schema:
+      type: integer
+      minimum: 1
+      default: 1
+responses:
+  '200':
+    description: OK
+  '201':
+    description: Created
+  '204':
+    description: No Content
+  '400':
+    description: Bad request
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/error'
+  '401':
+    description: Unauthorized
+  '403':
+    description: Forbidden
+  '404':
+    description: Not Found
+  '422':
+    description: Unprocessable Entity
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/error'
+  '500':
+    description: Internal Server Error
+  '503':
+    description: Service Unavailable
+  default:
+    description: Erreur
+schemas:
+  error:
+    type: object
+    description: RFC7807
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+      detail:
+        type: string

@@ -1,0 +1,580 @@
+openapi: 3.1.0
+info:
+  title: Instruction
+  version: 1.0.0
+servers:
+  - url: /instruction
+security:
+  - apiKey: []
+tags:
+  - name: Opération
+paths:
+  /operations:
+    get:
+      summary: Liste d'operations en cours d'instruction
+      operationId: getOperationsBy
+      tags:
+        - Opération
+      parameters:
+        - name: statut
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/statut"
+        - name: proprietaire
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: beneficiaire
+          in: query
+          schema:
+            type: string
+        - name: professionnel
+          in: query
+          schema:
+            type: string
+        - name: dateCreation[before]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateCreation[after]
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/operation"
+    post:
+      summary: Création d'une nouvelle opération d'économies d'énergie
+      operationId: createOperation
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                proprietaire:
+                  title: Identifiant du propriétaire de la ressource
+                  oneOf:
+                    - type: string
+                      format: uuid
+                    - type: "null"
+                dateVisitePrealable:
+                  title: Date de la visite préalable
+                  type: string
+                adresse:
+                  $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/france
+                beneficiaire:
+                  $ref: https://schemas.ceeconnect.fr/bundles/operation/beneficiaire
+                professionnel:
+                  $ref: https://schemas.ceeconnect.fr/bundles/operation/professionnel
+                precarite:
+                  $ref: https://schemas.ceeconnect.fr/bundles/operation/precarite
+              required:
+                - dateVisitePrealable
+                - adresse
+              allOf:
+                - $ref: ./components/operation.yaml
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/operation"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /operations/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/operation"
+    get:
+      summary: Recherche une opération d'économies d'énergie
+      operationId: getOperationByUuid
+      tags:
+        - Opération
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/operation"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+    patch:
+      summary: Modifie une opération d'économies d'énergie
+      operationId: updateOperation
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                fiche:
+                  $ref: https://schemas.ceeconnect.fr/formats/reference_fiche
+                bonification:
+                  title: Bonification
+                  oneOf:
+                    - $ref: https://schemas.ceeconnect.fr/formats/reference_bonification
+                    - type: "null"
+                dateVisitePrealable:
+                  title: Date de la visite préalable
+                  type: string
+                dateEngagement:
+                  title: Date d'engagement de l'opération
+                  type: string
+                  format: date
+                dateDebutTravaux:
+                  title: Date de début des travaux
+                  oneOf:
+                    - type: string
+                      format: date
+                    - type: "null"
+                dateAchevement:
+                  title: Date d'achèvement de l'opération
+                  oneOf:
+                    - type: string
+                      format: date
+                    - type: "null"
+                contribution:
+                  title: Rôle actif et incitatif
+                  oneOf:
+                    - type: object
+                      properties:
+                        nature:
+                          $ref: https://schemas.ceeconnect.fr/enums/nature_contribution
+                          title: Nature du rôle actif et incitatif
+                        valeur:
+                          title: Montant du rôle actif et incitatif
+                          type: number
+                          minimum: 0
+                    - type: "null"
+                adresse:
+                  $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/france
+                beneficiaire:
+                  $ref: https://schemas.ceeconnect.fr/bundles/operation/beneficiaire
+                professionnel:
+                  $ref: https://schemas.ceeconnect.fr/bundles/operation/professionnel
+                precarite:
+                  oneOf:
+                    - $ref: https://schemas.ceeconnect.fr/bundles/operation/precarite
+                    - type: "null"
+                description:
+                  title: Caractéristiques de l'opération
+                  oneOf:
+                    - type: object
+                    - type: "null"
+              allOf:
+                - $ref: ./components/operation.yaml
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/operation"
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+    delete:
+      summary: Supprime une opération d'économies d'énergie
+      operationId: removeOperation
+      tags:
+        - Opération
+      responses:
+        "204":
+          $ref: ../styles.yaml#/responses/204
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /operations/{uuid}/{action}:
+    parameters:
+      - $ref: "#/components/parameters/operation"
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+            - demande_prime
+            - confirmation_demande
+            - demande_paiement
+            - validation
+            - archivage
+            - annulation
+            - suspension
+    put:
+      summary: Gestion du cycle de vie de l'opération d'économies d'énergie
+      operationId: manageOperation
+      tags:
+        - Opération
+      responses:
+        "204":
+          $ref: ../styles.yaml#/responses/204
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /operations/{uuid}/notes:
+    parameters:
+      - $ref: "#/components/parameters/operation"
+    get:
+      summary: Liste les notes d'une opération d'économies d'énergie
+      operationId: searchNotes
+      tags:
+        - Opération
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/note"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+    post:
+      summary: Ajoute une nouvelle note à une opération d'économies d'énergie
+      operationId: createNote
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionnalProperties: false
+              properties:
+                description:
+                  title: Description
+                  type: string
+              required:
+                - description
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/note"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /operations/{uuid}/notes/{note_uuid}:
+    parameters:
+      - $ref: "#/components/parameters/operation"
+      - $ref: "#/components/parameters/note"
+    put:
+      summary: Modifie une note d'une opération d'économies d'énergie
+      operationId: updateNote
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionnalProperties: false
+              properties:
+                description:
+                  title: Description
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/note"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+    delete:
+      summary: Supprime une note d'une opération d'économies d'énergie
+      operationId: removeNote
+      tags:
+        - Opération
+      responses:
+        "204":
+          $ref: ../styles.yaml#/responses/204
+        "404":
+          $ref: ../styles.yaml#/responses/404
+components:
+  parameters:
+    operation:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    note:
+      name: note_uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    statut:
+      title: Statut de l'opération
+      type: string
+      oneOf:
+        - const: projet
+          title: Projet
+        - const: en_attente_confirmation
+          title: En attente de confirmation
+        - const: en_attente_travaux
+          title: En attente des travaux
+        - const: en_attente_validation
+          title: En attente de validation
+        - const: en_attente_paiement
+          title: En attente de paiement
+        - const: archive
+          title: Archivé
+        - const: annule
+          title: Annulé
+        - const: suspendu
+          title: Suspendu
+    note:
+      type: object
+      properties:
+        uuid:
+          title: Identifiant
+          type: string
+          format: uuid
+        operation:
+          title: Identifiant de l'opération
+          type: string
+          format: uuid
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        dateModification:
+          title: Date de modification
+          type: string
+          format: date
+        description:
+          title: Description
+          type: string
+      required:
+        - uuid
+        - operation
+        - dateCreation
+        - dateModification
+        - description
+    operation:
+      type: object
+      properties:
+        uuid:
+          title: Identifiant unique
+          type: string
+          format: uuid
+        proprietaire:
+          title: Identifiant unique du proprietaire de la ressource
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        statut:
+          $ref: "#/components/schemas/statut"
+        canEdit:
+          title: Droit d'écriture
+          type: boolean
+        canRemove:
+          title: Droit de suppression
+          type: boolean
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        dateModification:
+          title: Date de dernière modification
+          type: string
+          format: date
+        dateEngagement:
+          title: Date d'engagement de l'opération
+          type: string
+          format: date
+        dateVisitePrealable:
+          title: Date de la visite préalable
+          type: string
+          format: date
+        dateDebutTravaux:
+          title: Date de début des travaux
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        dateAchevement:
+          title: Date d'achèvement de l'opération
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        fiche:
+          title: Fiche d'opération standardisée
+          type: object
+          properties:
+            id:
+              $ref: https://schemas.ceeconnect.fr/formats/reference_fiche
+            code:
+              $ref: https://schemas.ceeconnect.fr/formats/code_fiche
+            secteur:
+              $ref: https://schemas.ceeconnect.fr/enums/secteur_application
+            nom:
+              title: Intitulé de la fiche
+              type: string
+          required:
+            - id
+            - code
+            - secteur
+            - nom
+        bonification:
+          title: Bonification
+          oneOf:
+            - type: "null"
+            - type: object
+              properties:
+                id:
+                  type: string
+                code:
+                  type: string
+                nature:
+                  type: string
+                nom:
+                  title: Intitulé de la fiche
+                  type: string
+              required:
+                - id
+                - code
+                - nature
+                - nom
+        contribution:
+          title: Rôle actif et incitatif
+          type: object
+          properties:
+            nature:
+              title: Nature du rôle actif et incitatif
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/nature_contribution
+                - type: "null"
+            valeur:
+              title: Montant du rôle actif et incitatif
+              oneOf:
+                - type: number
+                  minimum: 0
+                - type: "null"
+          required:
+            - nature
+            - valeur
+        valorisation:
+          title: Valorisation de l'opération
+          type: object
+          properties:
+            eligibiliteFiche:
+              title: Eligibilité à la fiche d'opération standardisée
+              oneOf:
+                - type: bool
+                - type: "null"
+            eligibiliteBonification:
+              title: Eligibilité à la bonification
+              oneOf:
+                - type: bool
+                - type: "null"
+            volumeCee:
+              title: Volume de CEE
+              type: integer
+              minimum: 0
+            volumeCeeClassique:
+              title: Volume de CEE classique
+              type: integer
+              minimum: 0
+            volumeCeePrecarite:
+              title: Volume de CEE précarité
+              type: integer
+              minimum: 0
+            volumeCeeFiche:
+              title: Volume de CEE de la fiche d'opération standardisée
+              type: integer
+              minimum: 0
+            volumeCeeBonification:
+              title: Volume de CEE de la bonification
+              type: integer
+              minimum: 0
+          required:
+            - eligibiliteFiche
+            - eligibiliteBonification
+            - volumeCee
+            - volumeCeeClassique
+            - volumeCeePrecarite
+            - volumeCeeFiche
+            - volumeCeeBonification
+        adresse:
+          $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/france
+        beneficiaire:
+          $ref: https://schemas.ceeconnect.fr/bundles/operation/beneficiaire
+        professionnel:
+          $ref: https://schemas.ceeconnect.fr/bundles/operation/professionnel
+        precarite:
+          oneOf:
+            - $ref: https://schemas.ceeconnect.fr/bundles/operation/precarite
+            - type: "null"
+        description:
+          oneOf:
+            - type: object
+            - type: "null"
+        notes:
+          title: Liste des notes
+          type: array
+          items:
+            $ref: "#/components/schemas/note"
+      allOf:
+        - $ref: ./components/operation.yaml
+      required:
+        - uuid
+        - proprietaire
+        - statut
+        - canEdit
+        - canRemove
+        - dateCreation
+        - dateModification
+        - dateEngagement
+        - dateVisitePrealable
+        - dateDebutTravaux
+        - dateAchevement
+        - fiche
+        - contribution
+        - valorisation
+        - adresse
+        - beneficiaire
+        - professionnel
+        - precarite
+        - notes
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: apiKey
+      in: header

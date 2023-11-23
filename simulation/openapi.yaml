@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: Simulation
+  version: 1.0.0
+servers:
+  - url: /simulation
+tags:
+  - name: Simulation
+paths:
+  /simule:
+    post:
+      summary: Évalue l'éligibilité et le volume CEE d'une opération standardisée d'économies d'énergie
+      operationId: simule
+      tags:
+        - Simulation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/bundles/simulation/operation
+              description: Simulation de l'éligibilité et du volume CEE d'une opération standardisée d'économies d'énergie
+              type: object
+              unevaluatedProperties: false
+      responses:
+        "200":
+          description: Retourne le résultat de la simulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resultat"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /simulations:
+    post:
+      summary: Enregistre une simulation
+      description: ⚠️ En cours de développement
+      operationId: createSimulation
+      tags:
+        - Simulation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/bundles/simulation/operation
+              description: Simulation de l'éligibilité et du volume CEE d'une opération standardisée d'économies d'énergie
+              type: object
+              unevaluatedProperties: false
+      responses:
+        "201":
+          description: Simulation sauvegardée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/simulation"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /simulations/{uuid}:
+    get:
+      summary: Retourne une simulation
+      description: ⚠️ En cours de développement
+      operationId: getSimulation
+      tags:
+        - Simulation
+      parameters:
+        - $ref: "#/components/parameters/simulation"
+      responses:
+        "200":
+          description: Simulation trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/simulation"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /simulations/{uuid}/simule:
+    get:
+      summary: Évalue l'éligibilité et le volume CEE d'une simulation existante
+      description: ⚠️ En cours de développement
+      operationId: simuleSimulation
+      tags:
+        - Simulation
+      parameters:
+        - $ref: "#/components/parameters/simulation"
+      responses:
+        "200":
+          description: Résultats de la simulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resultat"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+components:
+  parameters:
+    simulation:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    simulation:
+      type: object
+      properties:
+        uuid:
+          title: Identifiant unique
+          type: string
+          format: uuid
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        dateModification:
+          title: Date de dernière modification
+          type: string
+          format: date
+      required:
+        - uuid
+        - dateCreation
+        - dateModification
+      allOf:
+        - $ref: https://schemas.ceeconnect.fr/bundles/simulation/operation
+    resultat:
+      type: object
+      properties:
+        fiche:
+          title: Code de la fiche d'opération standardisée
+          type: string
+        bonification:
+          title: Code de la bonification
+          type:
+            - string
+            - "null"
+        volumeCeeClassique:
+          title: Volume de CEE classique
+          type: integer
+          minimum: 0
+        volumeCeePrecarite:
+          title: Volume de CEE précarité
+          type: integer
+          minimum: 0
+        volumeCeeFiche:
+          title: Volume de CEE de la fiche d'opération standardisée
+          type: integer
+          minimum: 0
+        volumeCeeBonification:
+          title: Volume de CEE de la bonification
+          type: integer
+          minimum: 0
+        eligibiliteFiche:
+          title: Eligibilité à la fiche d'opération standardisée
+          type:
+            - boolean
+            - "null"
+        eligibiliteBonification:
+          title: Eligibilité à la bonification
+          type:
+            - boolean
+            - "null"
+      required:
+        - fiche
+        - bonification
+        - volumeCeeClassique
+        - volumeCeePrecarite
+        - volumeCeeFiche
+        - volumeCeeBonification
+        - eligibiliteFiche
+        - eligibiliteBonification

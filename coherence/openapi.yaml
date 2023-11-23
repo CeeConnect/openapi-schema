@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: Cohérence
+  description: API de validation de la conformité et de la cohérence des données CEE
+  version: 1.0.0
+servers:
+  - url: /coherence
+tags:
+  - name: Dépôt
+  - name: Opération
+  - name: Contrôle
+paths:
+  /depot:
+    post:
+      summary: Valide un dépôt d'opérations d'économies d'énergie
+      operationId: checkDepot
+      tags:
+        - Dépôt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./components/depot.yaml
+      responses:
+        '204':
+          $ref: ../styles.yaml#/responses/204
+        '422':
+          $ref: ../styles.yaml#/responses/422
+  /operation:
+    post:
+      summary: Valide une opération d'économies d'énergie
+      operationId: checkOperation
+      tags:
+        - Opération
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ./components/operation.yaml
+      responses:
+        '204':
+          $ref: ../styles.yaml#/responses/204
+        '422':
+          $ref: ../styles.yaml#/responses/422
+  /controle:
+    post:
+      summary: Valide un contrôle d'une opération d'économies d'énergie
+      description: ⚠️ En cours de développement
+      operationId: checkControle
+      tags:
+        - Contrôle
+      responses:
+        '204':
+          $ref: ../styles.yaml#/responses/204
+        '422':
+          $ref: ../styles.yaml#/responses/422

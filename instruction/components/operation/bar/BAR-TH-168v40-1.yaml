@@ -1,0 +1,87 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-168v40-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-168v40-1
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceMetropolitaine
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/MAISON
+        title: Le bâtiment est une maison individuelle
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      usage:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_usage#/$defs/ecs
+        title: Usage couvert par l'équipement installé
+      surfaceCapteurs:
+        title: Surface hors-tout totale de capteurs solaires (m²)
+        type: number
+        minimum: 0
+      productiviteCapteurs:
+        title: Productivité des capteurs (W/m²)
+        type: number
+        minimum: 600
+      capteursHybrides:
+        title: Les capteurs solaires produisent à la fois électricité et chaleur
+          (capteurs hybrides)
+        type: boolean
+        const: false
+      marque:
+        title: Marque de l'équipement
+        type: string
+      reference:
+        title: Référence de l'équipement
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/86
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Certification CSTBat ou Solar Keymark
+          type: object
+          properties:
+            code:
+              type: string
+              const: CERTIFICATION
+      - contains:
+          title: Preuve de qualification du professionnel ayan réalisé l'opération
+          type: object
+          properties:
+            code:
+              type: string
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-168v40-1
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/0
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      usage: CHAUFFAGE_ECS
+      surfaceCapteurs: 10
+      productiviteCapteurs: 800
+      capteursHybrides: false
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: CERTIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

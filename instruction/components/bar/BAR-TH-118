@@ -1,0 +1,135 @@
+$schema: https://raw.githubusercontent.com/ceeconnect/json-schema/main/meta-schema
+title: BAR-TH-118
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-118
+  dateEngagement:
+    type: string
+    format: date
+    formatMinimum: '2015-01-01'
+  adresse:
+    $ref: >-
+      https://raw.githubusercontent.com/ceeconnect/json-schema/main/mixins/adresse#/$defs/france
+required:
+  - fiche
+  - dateEngagement
+  - adresse
+allOf:
+  - if:
+      properties:
+        dateEngagement:
+          type: string
+          format: date
+          formatMinimum: '2015-01-01'
+      required:
+        - dateEngagement
+    then:
+      allOf:
+        - $ref: '#/$defs/BAR-TH-118v14-1'
+$defs:
+  BAR-TH-118v14-1:
+    $id: https://schemas.ceeconnect.fr/bundles/operation/bar/BAR-TH-118v14-1
+    $schema: https://raw.githubusercontent.com/ceeconnect/json-schema/main/meta-schema
+    title: BAR-TH-118v14-1
+    type: object
+    properties:
+      description:
+        type: object
+        properties:
+          typeBatiment:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/bar/type_batiment#/$defs/individuel
+          ancienneteBatiment:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/anciennete#/$defs/batimentExistant
+          energieChauffage:
+            title: Énergie de chauffage
+            type: string
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/energie#/$defs/energiesChauffage
+          critereAncienneteEquipement:
+            title: >-
+              L'équipement de régulation est installé sur un système de
+              chauffage existant depuis plus de 2 ans
+            type: boolean
+            const: true
+          marque:
+            title: ' Marque de l''équipement'
+            type: string
+          reference:
+            title: Référence de l'équipement
+            type: string
+          installateur:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/bundles/operation/installateur
+        allOf:
+          - if:
+              properties:
+                typeBatiment:
+                  $ref: >-
+                    https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/bar/type_batiment#/$defs/APPARTEMENT
+              required:
+                - typeBatiment
+            then:
+              properties:
+                typeChauffage:
+                  $ref: >-
+                    https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/bar/type_chauffage
+                logements:
+                  title: Nombre d'appartements
+                  description: >-
+                    Nombre d'appartement régulés par la programmation
+                    d'intermittence
+                  type: integer
+                  minimum: 1
+              required:
+                - typeChauffage
+                - logements
+          - if:
+              properties:
+                typeBatiment:
+                  $ref: >-
+                    https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/bar/type_batiment#/$defs/MAISON
+              required:
+                - typeBatiment
+            then:
+              properties:
+                surfaceChaufee:
+                  title: Surface chauffée
+                  description: >-
+                    Surface chauffée par le système de chauffage sur lequel est
+                    installé le programmateur
+                  type: number
+                  minimum: 0
+              required:
+                - surfaceChaufee
+        required:
+          - ancienneteBatiment
+          - typeBatiment
+          - energieChauffage
+          - critereAncienneteEquipement
+          - marque
+          - reference
+          - installateur
+    required:
+      - description
+examples:
+  - fiche: BAR-TH-118
+    dateEngagement: '2024-01-01'
+    adresse:
+      $ref: >-
+        https://raw.githubusercontent.com/ceeconnect/json-schema/main/mixins/adresse#/examples/0
+    description:
+      typeBatiment: APPARTEMENT
+      ancienneteBatiment: EXISTANT
+      energieChauffage: COMBUSTIBLES
+      logements: 1
+      critereAncienneteEquipement: true
+      typeChauffage: INDIVIDUEL
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: >-
+          https://raw.githubusercontent.com/ceeconnect/json-schema/main/bundles/operation/installateur#/examples/0

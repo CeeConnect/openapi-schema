@@ -1,0 +1,111 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-EN-109v24-1
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-EN-109v24-1
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/franceOutreMer
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/batiment
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      energieChauffage:
+        $ref: https://schemas.ceeconnect.fr/enums/energie#/$defs/energiesChauffage
+      quantite:
+        title: Surface de toiture protégée (en m²)
+        type: number
+        minimum: 0
+      compositionToiture:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/constitution_toiture
+      facteurSolaire:
+        title: Facteur solaire (m².K/W)
+        type: number
+        maximum: 0.03
+      marque:
+        title: Marque de l'isolant
+        type: string
+      reference:
+        title: Référence de l'isolant
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/95
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/97
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/98
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    contains:
+      title: Preuve de qualification de l'installateur
+      type: object
+      properties:
+        code:
+          type: string
+          const: PREUVE_QUALIFICATION
+allOf:
+  - if:
+      properties:
+        adresse:
+          type: object
+          properties:
+            codeCommune:
+              type: string
+              pattern: "[976].+"
+    then:
+      properties:
+        description:
+          type: object
+          properties:
+            facteurSolaire:
+              type: number
+              maximum: 0.02
+  - if:
+      properties:
+        description:
+          type: object
+          properties:
+            compositionToiture:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/constitution_toiture#/$defs/ENSEMBLE_ELEMENTS
+    then:
+      properties:
+        documents:
+          type: array
+          allOf:
+            - contains:
+                title: Note de calcul du facteur solaire
+                type: object
+                properties:
+                  code:
+                    const: NOTE_CALCUL
+examples:
+  - fiche: BAR-EN-109v24-1
+    adresse:
+      $ref: https://schemas.ceeconnect.fr/mixins/adresse#/examples/3
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      energieChauffage: COMBUSTIBLES
+      quantite: 100
+      compositionToiture: ENSEMBLE_ELEMENTS
+      facteurSolaire: 0.01
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: NOTE_CALCUL
+        url: https://api.ceeconnect.fr/document/documents/{uuid}
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

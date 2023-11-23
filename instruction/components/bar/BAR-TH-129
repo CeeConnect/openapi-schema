@@ -1,0 +1,105 @@
+$schema: https://raw.githubusercontent.com/ceeconnect/json-schema/main/meta-schema
+title: BAR-TH-129
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-129
+  dateEngagement:
+    type: string
+    format: date
+    formatMinimum: '2018-04-01'
+  adresse:
+    $ref: >-
+      https://raw.githubusercontent.com/ceeconnect/json-schema/main/mixins/adresse#/$defs/france
+required:
+  - fiche
+  - dateEngagement
+  - adresse
+allOf:
+  - if:
+      properties:
+        dateEngagement:
+          type: string
+          format: date
+          formatMinimum: '2018-04-01'
+      required:
+        - dateEngagement
+    then:
+      allOf:
+        - $ref: '#/$defs/BAR-TH-129v27-3'
+$defs:
+  BAR-TH-129v27-3:
+    $id: https://schemas.ceeconnect.fr/bundles/operation/bar/BAR-TH-129v27-3
+    $schema: https://raw.githubusercontent.com/ceeconnect/json-schema/main/meta-schema
+    title: BAR-TH-129v27-3
+    type: object
+    properties:
+      description:
+        type: object
+        properties:
+          typeBatiment:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/bar/type_batiment#/$defs/individuel
+          ancienneteBatiment:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/anciennete#/$defs/batimentExistant
+          surfaceChauffee:
+            title: Surface exclusivement chauffée par la PAC installée
+            type: number
+            minimum: 0
+          puissanceNominale:
+            title: Puissance nominale de l'équipement
+            type: number
+            maximum: 12
+          performanceEnergetique:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/formats/performance_energetique#/$defs/scop
+            minimum: 3.9
+          marque:
+            title: Marque de l'équipement
+            type: string
+          reference:
+            title: Référence de l'équipement
+            type: string
+          installateur:
+            $ref: >-
+              https://raw.githubusercontent.com/ceeconnect/json-schema/main/bundles/operation/installateur
+            type: object
+            properties:
+              qualificationsRge:
+                type: array
+                contains:
+                  oneOf:
+                    - $ref: >-
+                        https://raw.githubusercontent.com/ceeconnect/json-schema/main/enums/domaine_rge#/$defs/89
+            required:
+              - qualificationsRge
+        required:
+          - typeBatiment
+          - ancienneteBatiment
+          - surfaceChauffee
+          - puissanceNominale
+          - performanceEnergetique
+          - marque
+          - reference
+          - installateur
+    required:
+      - description
+examples:
+  - fiche: BAR-TH-129
+    dateEngagement: '2024-01-01'
+    adresse:
+      $ref: >-
+        https://raw.githubusercontent.com/ceeconnect/json-schema/main/mixins/adresse#/examples/0
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      surfaceChauffee: 100
+      puissanceNominale: 9
+      performanceEnergetique: 4.2
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: >-
+          https://raw.githubusercontent.com/ceeconnect/json-schema/main/bundles/operation/installateur#/examples/0

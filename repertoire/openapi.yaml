@@ -1,0 +1,275 @@
+openapi: 3.1.0
+info:
+  title: Répertoire
+  description: API d'accès au répertoire des opérations standardisées d'économies d'énergie
+  version: 1.0.0
+servers:
+  - url: /repertoire
+tags:
+  - name: Fiche
+  - name: Bonification
+paths:
+  /fiches:
+    get:
+      summary: Recherche une liste des fiches d'opération standardisée par attributs
+      operationId: searchFiches
+      tags:
+        - Fiche
+      parameters:
+        - name: code
+          in: query
+          schema:
+            $ref: "#/components/schemas/codeFiche"
+        - name: secteur
+          in: query
+          schema:
+            $ref: "#/components/schemas/codeSecteur"
+        - name: sousSecteur
+          in: query
+          schema:
+            $ref: "#/components/schemas/codeSousSecteur"
+        - name: date
+          in: query
+          description: Date prévue de l'opération
+          schema:
+            type: string
+            format: date
+        - name: metropole
+          in: query
+          description: Fiche applicable en France métropolitaine
+          schema:
+            type: boolean
+        - name: outreMer
+          in: query
+          description: Fiche applicable en France d'outre-mer
+          schema:
+            type: boolean
+        - name: couverture
+          in: query
+          description: Fiche couverte
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Fiches d'opération standardisée retournées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fiche'
+  /fiches/{code}:
+    get:
+      summary: Recherche une fiche d'opération standardisée par son code
+      operationId: findFiche
+      tags:
+        - Fiche
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/codeFiche"
+        - name: date
+          in: query 
+          schema:
+            type: string
+            format: date
+        - name: couverture
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Fiche d'opération standardisée retournée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fiche'
+        '404':
+          description: Fiche d'opération standardisée non trouvée
+  /bonifications:
+    get:
+      summary: Recherche une liste des bonifications par attributs
+      operationId: searchBonification
+      tags:
+        - Bonification
+      parameters:
+        - name: code
+          in: query
+          schema:
+            $ref: "#/components/schemas/codeBonification"
+        - name: date
+          in: query
+          description: Date prévue de l'opération
+          schema:
+            type: string
+            format: date
+        - name: couverture
+          in: query
+          description: Fiche couverte
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Bonifications retournées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/bonification'
+  /bonifications/{code}:
+    get:
+      summary: Recherche une bonification par son code
+      operationId: findBonification
+      tags:
+        - Bonification
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/codeBonification"
+        - name: date
+          in: query 
+          schema:
+            type: string
+            format: date
+        - name: couverture
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Bonification retournée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bonification'
+        '404':
+          description: Bonification non trouvée
+components:
+  schemas:
+    fiche:
+      type: object
+      properties:
+        code:
+          $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/fiche
+        version:
+          oneOf:
+            - type: string
+              pattern: ^[0-9]+[.][0-9]+$
+              examples:
+                - "14.1"
+                - "33.4"
+            - type: "null"
+        nom:
+          type: string
+        secteur:
+          title: Secteur d'application
+          type: object
+          properties:
+            code:
+              $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/secteur
+            nom:
+              title: Nom
+              type: string
+          required:
+            - code
+            - nom
+        sousSecteur:
+          title: Sous secteur d'application
+          type: object
+          properties:
+            code:
+              $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/sous_secteur
+            nom:
+              title: Nom
+              type: string
+          required:
+            - code
+            - nom
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          type:
+            - string
+            - 'null'
+          format: date
+        metropole:
+          type: boolean
+        outreMer:
+          type: boolean
+        couverture:
+          type: boolean
+      required:
+        - code
+        - version
+        - nom
+        - secteur
+        - sousSecteur
+        - dateDebut
+        - dateFin
+        - metropole
+        - outreMer
+        - couverture
+    bonification:
+      type: object
+      properties:
+        code:
+          $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/bonification
+        version:
+          oneOf:
+            - type: string
+              pattern: ^[0-9]+[.][0-9]+$
+              examples:
+                - "14.1"
+                - "33.4"
+            - type: "null"
+        nom:
+          type: string
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          type:
+            - string
+            - "null"
+          format: date
+        couverture:
+          type: boolean
+      required:
+        - code
+        - nom
+        - version
+        - dateDebut
+        - dateFin
+        - couverture
+    version:
+      title: Version
+      type: object
+      properties:
+        code:
+          type: string
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+      required:
+        - code
+        - dateDebut
+        - dateFin
+    codeSecteur:
+      $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/secteur
+    codeSousSecteur:
+      $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/sous_secteur
+    codeFiche:
+      $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/fiche
+    codeBonification:
+      $ref: https://raw.githubusercontent.com/CeeConnect/json-schema/main/enums/bonification

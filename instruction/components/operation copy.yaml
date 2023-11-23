@@ -1,0 +1,68 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+properties:
+  proprietaire:
+    title: Identifiant du propriétaire de la ressource
+    oneOf:
+      - type: string
+        format: uuid
+      - type: "null"
+  fiche:
+    $ref: https://schemas.ceeconnect.fr/enums/fiche
+  bonification:
+    title: Bonification
+    oneOf:
+      - $ref: https://schemas.ceeconnect.fr/formats/bonification
+      - type: "null"
+  dateVisitePrealable:
+    title: Date de la visite préalable
+    type: string
+  dateEngagement:
+    title: Date d'engagement de l'opération
+    type: string
+    format: date
+  dateDebutTravaux:
+    title: Date de début des travaux
+    oneOf:
+      - type: string
+        format: date
+      - type: "null"
+  dateAchevement:
+    title: Date d'achèvement de l'opération
+    oneOf:
+      - type: string
+        format: date
+      - type: "null"
+  adresse:
+    $ref: https://schemas.ceeconnect.fr/mixins/adresse#/$defs/france
+  beneficiaire:
+    title: Bénéficiaire
+    description: Bénéficiaire de l'opération d'économies d'énergie
+    oneOf:
+      - $ref: https://schemas.ceeconnect.fr/bundles/operation/beneficiaire
+      - type: "null"
+  professionnel:
+    title: Professionnel
+    description: Professionnel assurant la maîtrise d'oeuvre ou la réalisation de l'opération
+    oneOf:
+      - $ref: https://schemas.ceeconnect.fr/bundles/operation/professionnel
+      - type: "null"
+  precarite:
+    oneOf:
+      - $ref: https://schemas.ceeconnect.fr/bundles/operation/precarite
+      - type: "null"
+required:
+  - fiche
+  - dateVisitePrealable
+  - dateEngagement
+allOf:
+  - if:
+      type: object
+      properties:
+        fiche:
+          pattern: ^BAR.+$
+      required:
+        - fiche
+    then:
+      allOf:
+        - $ref: ./operation/bar/operation.yaml

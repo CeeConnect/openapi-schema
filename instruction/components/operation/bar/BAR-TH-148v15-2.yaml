@@ -1,0 +1,69 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: BAR-TH-148v15-2
+type: object
+properties:
+  fiche:
+    type: string
+    const: BAR-TH-148v15-2
+  description:
+    type: object
+    properties:
+      typeBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_batiment#/$defs/individuel
+      ancienneteBatiment:
+        $ref: https://schemas.ceeconnect.fr/enums/anciennete#/$defs/batimentExistant
+      typeEquipement:
+        $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/chauffeEauThermodynamique
+      performanceEnergetique:
+        $ref: https://schemas.ceeconnect.fr/formats/performance_energetique#/$defs/cop
+        exclusiveMinimum: 2.4
+      marque:
+        title: Marque
+        type: string
+      reference:
+        title: Référence
+        type: string
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur
+        type: object
+        properties:
+          qualificationsRge:
+            type: array
+            contains:
+              oneOf:
+                - $ref: https://schemas.ceeconnect.fr/enums/domaine_rge#/$defs/90
+    allOf:
+      - if:
+          properties:
+            typeEquipement:
+              $ref: https://schemas.ceeconnect.fr/enums/bar/type_equipement#/$defs/PAC_CET_AIR_EXTRAIT
+        then:
+          properties:
+            performanceEnergetique:
+              type: number
+              exclusiveMinimum: 2.5
+  documents:
+    type: array
+    items:
+      $ref: https://schemas.ceeconnect.fr/bundles/document
+    allOf:
+      - contains:
+          title: Preuve de qualification du professionnel ayan réalisé l'opération
+          type: object
+          properties:
+            code:
+              const: PREUVE_QUALIFICATION
+examples:
+  - fiche: BAR-TH-148v15-2
+    description:
+      typeBatiment: MAISON
+      ancienneteBatiment: EXISTANT
+      typeEquipement: PAC_CET_AIR_EXTRAIT
+      performanceEnergetique: 2.6
+      marque: MARQUE
+      reference: REFERENCE
+      installateur:
+        $ref: https://schemas.ceeconnect.fr/bundles/operation/installateur#/examples/0
+    documents:
+      - code: PREUVE_QUALIFICATION
+        url: https://api.ceeconnect.fr/document/documents/{uuid}

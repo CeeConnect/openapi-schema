@@ -1,0 +1,196 @@
+openapi: 3.1.0
+info:
+  title: Litige
+  version: 1.0.0
+servers:
+  - url: /litige
+security:
+  - apiKey: []
+tags:
+  - name: Litige
+paths:
+  /litiges:
+    get:
+      summary: Liste les litiges
+      operationId: getLitiges
+      tags:
+        - Litige
+      parameters:
+        - name: depot
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: operation
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: statut
+          in: query
+          schema:
+            $ref: "#/components/schemas/statut"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/litige"
+    post:
+      summary: Ajoute un nouveau litige
+      operationId: createLitige
+      tags:
+        - Litige
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionnalProperties: false
+              properties:
+                reference:
+                  title: Référence externe
+                  type: string
+                  format: uuid
+                description:
+                  title: Description du litige
+                  type: string
+              required:
+                - description
+                - reference
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/litige"
+        "422":
+          $ref: ../styles.yaml#/responses/422
+  /litiges/{uuid}:
+    parameters:
+      - $ref: "#/components/parameters/litige"
+    patch:
+      summary: Modification d'un litige
+      operationId: updateLitige
+      tags:
+        - Litige
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+              additionnalProperties: false
+              properties:
+                description:
+                  title: Description du litige
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/litige"
+        "404":
+          $ref: ../styles.yaml#/responses/404
+        "422":
+          $ref: ../styles.yaml#/responses/422
+    delete:
+      summary: Supprime un litige
+      operationId: removeLitige
+      tags:
+        - Litige
+      responses:
+        "204":
+          $ref: ../styles.yaml#/responses/204
+        "404":
+          $ref: ../styles.yaml#/responses/404
+  /litiges/{uuid}/{action}:
+    parameters:
+      - $ref: "#/components/parameters/litige"
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: object
+          properties:
+            action:
+              type: string
+              enum:
+                - correction
+                - invalide
+                - valide
+          required:
+            - action
+    post:
+      summary: Gestion du cycle de vie d'un litige 
+      operationId: manageLitige
+      tags:
+        - Litige
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/litige"
+        "403":
+          $ref: ../styles.yaml#/responses/403
+        "404":
+          $ref: ../styles.yaml#/responses/404
+components:
+  parameters:
+    litige:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    statut:
+      title: Statut du litige
+      type: string
+      oneOf:
+        - const: en_attente_correction
+          title: En attente de correction
+        - const: en_attente_verification
+          title: En attente de vérification
+        - const: resolu
+          title: Litige résolu
+    litige:
+      title: Litige
+      type: object
+      properties:
+        uuid:
+          title: Identifiant
+          type: string
+          format: uuid
+        reference:
+          title: Référence externe
+          type: string
+          format: uuid
+        dateCreation:
+          title: Date de création
+          type: string
+          format: date
+        description:
+          title: Description du litige
+          type: string
+        statut:
+          $ref: "#/components/schemas/statut"
+      required:
+        - uuid
+        - reference
+        - dateCreation
+        - description
+        - statut
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: apiKey
+      in: header
